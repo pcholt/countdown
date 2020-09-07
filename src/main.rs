@@ -1,15 +1,21 @@
+extern crate signal_hook;
+
 use std::env::args;
+use std::process;
+
 
 fn main() {
-    let a = match args().next() {
-        None => {"abcdefg".to_string()},
-        Some(word) => {word},
+    let _signal = unsafe { signal_hook::register(signal_hook::SIGPIPE, || process::abort()) };
+
+    let a = match args().skip(1).next() {
+        None => { "".to_string() }
+        Some(word) => { word }
     };
     let words = words::match_words(a.as_str());
     let mut words = words.clone();
     words.sort_by(|a, b| a.len().cmp(&b.len()).reverse());
-    for word in words.iter().take(5) {
-        println!("word = {}", word);
+    for word in words.iter() {
+        println!("{}", word);
     }
 }
 
